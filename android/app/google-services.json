@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "909981773271",
+    "project_id": "emhere-2025",
+    "storage_bucket": "emhere-2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:909981773271:android:2d5b6975dd8c229fd8af92",
+        "android_client_info": {
+          "package_name": "com.company.emhere"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLLYp4313bakLQIlBA7llaAjpIGiuNgNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
