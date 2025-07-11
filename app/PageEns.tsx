@@ -6,8 +6,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { Avatar, Button, Divider, Text } from 'react-native-paper';
-import { auth, db } from '../../services/firebaseConfig';
-import { changeUserPassword, logoutUser } from '../../services/userService';
+import { auth, db } from '../services/firebaseConfig';
+import { changeUserPassword, logoutUser } from '../services/userService';
 
 export default function ProfilScreen() {
   const [fullName, setFullName] = useState('');
@@ -62,7 +62,7 @@ const [newPassword, setNewPassword] = useState('');
       <View style={styles.profileSection}>
         <Avatar.Image
           size={100}
-          source={require('../../assets/images/avatar-placeholder.jpg')}
+          source={require('../assets/images/avatar-placeholder.jpg')}
         />
         <Text style={styles.fullName}>{fullName}</Text>
       </View>

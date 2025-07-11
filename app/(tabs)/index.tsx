@@ -6,8 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Button, Card, Menu, Provider } from 'react-native-paper';
+import { Button, Card, IconButton, Menu, Provider, } from 'react-native-paper';
 import { fetchEdtWithCours } from '../../services/edtService';
+
+import { useRouter } from 'expo-router';
+import { Alert } from 'react-native';
+import { deleteEdt, getEdtById } from '../../services/edtService';
 
 const hours = [
   { start: '08:00', end: '10:00' },
@@ -15,6 +19,10 @@ const hours = [
   { start: '14:00', end: '16:00' },
   { start: '16:00', end: '18:00' },
 ];
+
+
+const router = useRouter();
+
 
 const getWeekDates = () => {
   const week: Date[] = [];
@@ -33,6 +41,8 @@ const CoursesScreen = () => {
   const [classe, setClasse] = useState('M1');
   const [classeMenuVisible, setClasseMenuVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  
 
   const days = getWeekDates();
 
@@ -55,9 +65,43 @@ const CoursesScreen = () => {
       year: 'numeric',
     });
 
+   const handleEdit = async (id: string) => {
+  try {
+    const data = await getEdtById(id);
+    router.push({ pathname: '/modifierEDT', params: { id, ...data } });
+  } catch (err) {
+    alert("Erreur chargement EDT pour modification");
+  }
+};
+
+const handleDelete = (id: string) => {
+  Alert.alert(
+    'Confirmation',
+    'Voulez-vous vraiment supprimer ce cours ?',
+    [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Supprimer',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteEdt(id);
+            alert('Supprimé avec succès');
+            // rafrâîchir liste si nécessaire ici
+          } catch {
+            alert('Erreur lors de la suppression');
+          }
+        },
+      },
+    ]
+  );
+};
+
+
   return (
     <Provider>
       <View style={styles.container}>
+
         {/* Header */}
         <View style={styles.headerContainer}>
           <Menu
@@ -106,34 +150,66 @@ const CoursesScreen = () => {
             );
           })}
         </View>
+      
 
         {/* Schedule Display */}
-        <ScrollView>
-          {hours.map(({ start, end }, idx) => {
-            const items = getCoursesForSlot(start, end);
-            return (
-              <View key={idx} style={styles.courseBlock}>
-                <Text style={styles.hour}>{`${start} - ${end}`}</Text>
-                {items.length > 0 ? (
-                  items.map((item, index) => (
-                    <Card key={index} style={styles.card}>
-                      <Card.Content>
-                        <Text style={styles.courseTitle}>
-                          {item.cours?.design} {item.cours?.niveau}{' '}
-                          {item.cours?.parcours}
-                        </Text>
-                        <Text>Enseignant : {item.enseignant?.prenom}</Text>
-                        <Text>Salle: {item.salle}</Text>
-                      </Card.Content>
-                    </Card>
-                  ))
-                ) : (
-                  <Text style={styles.noCourse}>Aucun cours</Text>
-                )}
-              </View>
-            );
-          })}
-        </ScrollView>
+       <ScrollView>
+        {hours.map(({ start, end }, idx) => {
+          const items = getCoursesForSlot(start, end);
+          return (
+            <View key={idx} style={styles.courseBlock}>
+              <Text style={styles.hour}>{`${start} - ${end}`}</Text>
+              {items.length > 0 ? (
+                items.map((item, index) => {
+                  const edtSelected = selectedCardId === item.id;
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        setSelectedCardId(edtSelected ? null : item.id)
+                      }
+                    >
+                      <Card style={styles.card}>
+                        <Card.Content style={styles.cardContent}>
+                          {edtSelected && (
+                            <View style={styles.actionButtons}>
+                              <IconButton
+                                icon="pencil"
+                                size={20}
+                                iconColor="white"
+                                style={styles.editButton}
+                                onPress={() => handleEdit(item.id)}
+                              />
+                              <IconButton
+                                icon="delete"
+                                size={20}
+                                iconColor="white"
+                                style={styles.deleteButton}
+                                onPress={() => handleDelete(item.id)}
+                              />
+                            </View>
+                          )}
+                          <View>
+                          <Text style={styles.courseTitle}>
+                            {item.cours?.design} {item.cours?.niveau}{' '}
+                            {item.cours?.parcours}
+                          </Text>
+                          <Text>Enseignant : {item.enseignantPrenom}</Text>
+                          <Text>Salle: {item.salle}</Text>
+                          </View>
+                          
+                        </Card.Content>
+                      </Card>
+                    </TouchableOpacity>
+                  );
+                })
+              ) : (
+                <Text style={styles.noCourse}>Aucun cours</Text>
+              )}
+            </View>
+          );
+        })}
+      </ScrollView>
       </View>
     </Provider>
   );
@@ -183,7 +259,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dayCircleSelected: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#07AFAF',
   },
   dayText: {
     color: '#000',
@@ -196,10 +272,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 5,
+  
   },
   card: {
     backgroundColor: '#e8f0fe',
     marginVertical: 5,
+    
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
   },
   courseTitle: {
     fontWeight: 'bold',
@@ -208,5 +291,18 @@ const styles = StyleSheet.create({
   noCourse: {
     color: '#aaa',
     marginLeft: 10,
+  },
+
+
+   actionButtons: {
+    marginRight: 12,
+    alignItems: 'center',
+  },
+  editButton: {
+    backgroundColor: '#1d638bff',
+    marginBottom: 8,
+  },
+  deleteButton: {
+    backgroundColor: '#a10f0fff',
   },
 });

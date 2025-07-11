@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "emhere",
+    "name": "presantika",
     "slug": "emhere",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/splash.png",
     "scheme": "emhere",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -35,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import React from 'react';
+import { Text, View } from 'react-native';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -13,19 +14,25 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+ if (!loaded) {
+  return <View><Text>Chargement des polices...</Text></View>;
+}
+
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
 <Stack>
-  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+  <Stack.Screen name="index" options={{ title: 'Home', headerShown: false }} />
+  <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+  <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
+    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
   <Stack.Screen name="+not-found" />
   <Stack.Screen name="TeacherListe" />
   <Stack.Screen name="StudentsListe"  />
   <Stack.Screen name="CoursListe"  />
+    <Stack.Screen name="modifierEDT" />
+  <Stack.Screen name="PageEns" options={{ title: 'Page des Enseignants' }} />
+  <Stack.Screen name="PageStudent" options={{ title: 'Page des Etudiants' }} />
 </Stack>
 <StatusBar style="auto" />
     </ThemeProvider>

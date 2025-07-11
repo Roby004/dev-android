@@ -97,7 +97,7 @@ useEffect(() => {
 
         <View style={{ marginHorizontal: 20 }}>
           <Text style={styles.subtitle}>
-            Veuillez remplir les informations concernant la fiche de présence que vous voulez chercher
+            Veuillez remplir les informations sur le cours que vous voulez ajouter dans l'emploi du temps
           </Text>
 
            {/* Date Picker UI */}

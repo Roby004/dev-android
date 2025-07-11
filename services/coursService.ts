@@ -29,33 +29,45 @@ export async function fetchCours() {
     const coursData = await Promise.all(
       coursSnapshot.docs.map(async (coursDoc) => {
         const cours = coursDoc.data();
-        let enseignantName = 'Inconnu';
 
         try {
+          // Récupérer document enseignant
           const enseignantRef = doc(db, 'enseignants', cours.enseignant_id);
           const enseignantSnap = await getDoc(enseignantRef);
-          if (enseignantSnap.exists()) {
-            const ens = enseignantSnap.data();
-            enseignantName = ens.prenom;
-          }
-        } catch (e) {
-          console.warn(`Enseignant ${cours.enseignant_id} introuvable`);
-        }
+          if (!enseignantSnap.exists()) return null;
 
-        return {
-          id: coursDoc.id,
-          design: cours.design,
-          mention: cours.mention,
-          niveau: cours.niveau,
-          parcours: cours.parcours,
-          enseignantName, // Add full name here
-        };
+          const enseignantData = enseignantSnap.data();
+
+          // Vérifier présence user_id
+          if (!enseignantData.user_id) return null;
+
+          // Récupérer prénom depuis la collection users
+          const userRef = doc(db, 'users', enseignantData.user_id);
+          const userSnap = await getDoc(userRef);
+          if (!userSnap.exists()) return null;
+
+          const userData = userSnap.data();
+          const enseignantPrenom = userData.prenom_user ?? 'Inconnu';
+
+          return {
+            id: coursDoc.id,
+            design: cours.design,
+            mention: cours.mention,
+            niveau: cours.niveau,
+            parcours: cours.parcours,
+            enseignantName: enseignantPrenom,
+          };
+        } catch (e) {
+          console.warn(`Erreur sur le cours ${coursDoc.id}:`, e);
+          return null;
+        }
       })
     );
 
-    return coursData;
+    // Supprimer les entrées nulles (enseignants invalides ou sans user_id)
+    return coursData.filter(item => item !== null);
   } catch (e) {
-    console.error('Error fetching cours:', e);
-    throw e;
+    console.error('Erreur lors de la récupération des cours :', e);
+    return [];
   }
 }

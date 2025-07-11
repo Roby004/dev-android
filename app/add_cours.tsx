@@ -39,7 +39,9 @@ const [selectedEnseignant, setSelectedEnseignant] = useState<{ id: string; label
       nom: ens.nom,
       prenom: ens.prenom,
     }));
+  
     setEnseignants(parsed);
+      console.log('Enseignants récupérés:', parsed);
     if (parsed.length > 0) {
       setSelectedEnseignant({ id: parsed[0].id, label: `${parsed[0].prenom} ${parsed[0].nom}` });
     }
@@ -51,7 +53,7 @@ const handleSubmit = async () => {
   try {
     await addCours({
       design: course,
-      mention: 'Info',
+      mention: 'Informatique',
       niveau : niveau,
       parcours : parcours,
       enseignant_id: selectedEnseignant.id,
