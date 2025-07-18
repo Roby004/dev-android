@@ -33,6 +33,9 @@ export default function RootLayout() {
     <Stack.Screen name="modifierEDT" />
   <Stack.Screen name="PageEns" options={{ title: 'Page des Enseignants' }} />
   <Stack.Screen name="PageStudent" options={{ title: 'Page des Etudiants' }} />
+  <Stack.Screen name="etudiantPage" options={{ title: 'Etudiants' }} />
+  <Stack.Screen name="EmploiDuTempsScreen" options={{ title: 'EDT' }} />
+
 </Stack>
 <StatusBar style="auto" />
     </ThemeProvider>

@@ -33,7 +33,7 @@ export default function Login() {
       const { role } = docSnap.data();
 
       if (role === 'admin') router.replace('/(tabs)');
-      else if (role === 'etudiant') router.replace('/PageStudent');
+      else if (role === 'etudiant') router.replace('/etudiantPage');
       else if (role === 'enseignant') router.replace('/PageEns');
       else alert('Unknown role');
     } catch (error) {
